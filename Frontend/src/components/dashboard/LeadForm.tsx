@@ -3,13 +3,7 @@
 import { useState } from "react";
 import axios from "axios";
 
-// New imports
-import Navbar from "../components/layout/Navbar";
-import Sidebar from "../components/layout/Sidebar";
-import DashboardCard from "../components/dashboard/DashboardCard";
-import LeadForm from "../components/dashboard/LeadForm";
-
-export default function Home() {
+export default function LeadForm() {
   const [form, setForm] = useState({
     clientName: "",
     company: "",
@@ -19,8 +13,13 @@ export default function Home() {
     requirements: "",
   });
 
+  const [result, setResult] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     setForm({
       ...form,
@@ -29,49 +28,46 @@ export default function Home() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  try {
-    const response = await axios.post(
-      "http://localhost:5000/api/leads/analyze",
-      form
-    );
+    setLoading(true);
 
-    console.log(response.data);
-    alert("Lead analyzed successfully!");
-  } catch (error) {
-    console.error(error);
-    alert("Backend connection failed.");
-  }
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/leads/analyze",
+        form
+      );
 
+      console.log(response.data);
+      setResult(response.data);
+    } catch (error) {
+      console.error(error);
+      alert("Backend connection failed.");
+    }
 
-    console.log(form);
-    alert("Lead Submitted Successfully!");
+    setLoading(false);
   };
 
   return (
-    <main
+    <div
       style={{
-        minHeight: "100vh",
-        background: "#0b1220",
-        color: "white",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: "40px",
+        background: "#1b2746",
+        padding: "20px",
+        borderRadius: "12px",
+        marginTop: "20px",
       }}
     >
+      <h2>Lead Analysis Form</h2>
+
       <form
         onSubmit={handleSubmit}
         style={{
-          width: "450px",
           display: "flex",
           flexDirection: "column",
           gap: "15px",
+          marginTop: "20px",
         }}
       >
-        <h1>LeadPilot AI</h1>
-
         <input
           name="clientName"
           placeholder="Client Name"
@@ -117,17 +113,39 @@ export default function Home() {
         <button
           type="submit"
           style={{
-            padding: "15px",
+            padding: "14px",
             background: "#00aaff",
-            color: "white",
+            color: "#fff",
             border: "none",
-            cursor: "pointer",
             borderRadius: "8px",
+            cursor: "pointer",
           }}
         >
-          Analyze Lead
+          {loading ? "Analyzing..." : "Analyze Lead"}
         </button>
       </form>
-    </main>
+
+      {result && (
+        <div
+          style={{
+            marginTop: "25px",
+            padding: "15px",
+            background: "#0b1220",
+            borderRadius: "10px",
+          }}
+        >
+          <h3>AI Response</h3>
+
+          <pre
+            style={{
+              whiteSpace: "pre-wrap",
+              color: "#00ff99",
+            }}
+          >
+            {JSON.stringify(result, null, 2)}
+          </pre>
+        </div>
+      )}
+    </div>
   );
 }
