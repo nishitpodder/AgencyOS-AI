@@ -17,3 +17,10 @@ Thumbs.db
 
 # VS Code
 .vscode/
+node_modules/
+.env
+.env.local
+.next/
+dist/
+build/
+*.log

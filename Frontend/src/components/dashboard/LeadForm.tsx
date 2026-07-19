@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import axios from "axios";
+const API = process.env.NEXT_PUBLIC_API_URL;
 
 export default function LeadForm() {
   const [form, setForm] = useState({
@@ -25,7 +26,7 @@ const handleGenerateEmail = async () => {
 
   try {
     const response = await axios.post(
-      "http://localhost:5000/api/email/generate",
+      `${API}/api/email/generate`,
       {
         lead: form,
         analysis: result,
@@ -53,7 +54,7 @@ const handleDownloadPDF = async () => {
 
   try {
     const response = await axios.post(
-      "http://localhost:5000/api/pdf/generate",
+      `${API}/api/pdf/generate`,
       {
         proposal,
       },
@@ -103,7 +104,7 @@ const handleSubmit = async (e: React.FormEvent) => {
 
   try {
     const response = await axios.post(
-      "http://localhost:5000/api/leads/analyze",
+      `${API}/api/leads/analyze`,
       form
     );
 
@@ -128,7 +129,7 @@ const handleGenerateProposal = async () => {
 
   try {
     const response = await axios.post(
-      "http://localhost:5000/api/proposal/generate",
+      `${API}/api/proposal/generate`,
       {
         lead: form,
         analysis: result,
@@ -144,24 +145,7 @@ console.log(response.data.proposal);
     alert(
       error.response?.data?.message ||
       "Failed to generate proposal." 
-    );<button
-    type="button"
-    onClick={handleGenerateEmail}
-    disabled={emailLoading || !proposal}
-    style={{
-        marginLeft:"15px",
-        padding:"10px 18px",
-        background:"#9333ea",
-        color:"#fff",
-        border:"none",
-        borderRadius:"8px",
-        cursor:"pointer"
-    }}
->
-    {emailLoading
-        ? "Generating..."
-        : "Generate Email"}
-</button>
+    )
   } finally {
     setProposalLoading(false);
   }
@@ -506,42 +490,46 @@ console.log(response.data.proposal);
     }}
   >
     <h3>Generated Proposal</h3>
-    <button
-  type="button"
-  onClick={handleDownloadPDF}
+    <div
   style={{
     display: "flex",
     gap: "10px",
     marginBottom: "15px",
-    padding: "10px 18px",
-    background: "#2563eb",
-    color: "#fff",
-    border: "none",
-    borderRadius: "8px",
-    cursor: "pointer",
   }}
 >
-  📄 Download PDF
-</button>
-<button
-  type="button"
-  onClick={() => {
-    navigator.clipboard.writeText(proposal);
-    alert("Proposal copied!");
-  }}
-  style={{
-    marginLeft: "10px",
-    marginBottom: "15px",
-    padding: "10px 18px",
-    background: "#16a34a",
-    color: "#fff",
-    border: "none",
-    borderRadius: "8px",
-    cursor: "pointer",
-  }}
->
-  📋 Copy Proposal
-</button>
+  <button
+    type="button"
+    onClick={handleDownloadPDF}
+    style={{
+      padding: "10px 18px",
+      background: "#2563eb",
+      color: "#fff",
+      border: "none",
+      borderRadius: "8px",
+      cursor: "pointer",
+    }}
+  >
+    📄 Download PDF
+  </button>
+
+  <button
+    type="button"
+    onClick={() => {
+      navigator.clipboard.writeText(proposal);
+      alert("Proposal copied!");
+    }}
+    style={{
+      padding: "10px 18px",
+      background: "#16a34a",
+      color: "#fff",
+      border: "none",
+      borderRadius: "8px",
+      cursor: "pointer",
+    }}
+  >
+    📋 Copy Proposal
+  </button>
+</div>
     <pre
       style={{
         whiteSpace: "pre-wrap",
