@@ -57,4 +57,4 @@ Reduce repetitive agency work from **30 minutes to less than 3 minutes** using A
 
 🚧 Currently under development (Hackathon MVP)
 
-Version: **1.0 MVP**
+Version: **1.0 MVP**# LeadPilot-AI
