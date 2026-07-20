@@ -49,6 +49,10 @@ Requirements: ${leadData.requirements}
       });
 
       console.log("✅ Gemini Response Received");
+      console.log("===== GEMINI RESPONSE =====");
+console.dir(response, { depth: null });
+
+console.log("Type of response:", typeof response);
 
       return response.text;
 

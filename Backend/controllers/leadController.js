@@ -32,8 +32,12 @@ const analyzeLeadController = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Controller Error:");
-    console.error(error);
+    console.error("===== CONTROLLER ERROR =====");
+console.error(error);
+
+if (error.stack) {
+  console.error(error.stack);
+}
 
     res.status(error.status || 500).json({
       success: false,
