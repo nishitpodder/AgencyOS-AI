@@ -5,26 +5,35 @@ const analyzeLeadController = async (req, res) => {
   console.log(req.body);
 
   try {
-    console.log("Calling Gemini...");
+    console.log("Calling OpenRouter...");
 
     const result = await analyzeLead(req.body);
 
-    console.log("Gemini returned:");
+    console.log("OpenRouter returned:");
     console.log(result);
 
-    // Parse Gemini JSON response
-    let parsedResult;
+   // Parse OpenRouter JSON response
+let parsedResult;
 
-    try {
-      parsedResult = JSON.parse(result);
-    } catch (parseError) {
-      console.error("JSON Parse Error:", parseError);
+try {
+  let cleaned = result.trim();
 
-      return res.status(500).json({
-        success: false,
-        message: "AI returned invalid JSON.",
-      });
-    }
+  // Remove Markdown code fences if the model returns them
+  cleaned = cleaned.replace(/^```json\s*/i, "");
+  cleaned = cleaned.replace(/^```\s*/i, "");
+  cleaned = cleaned.replace(/```$/, "");
+
+  parsedResult = JSON.parse(cleaned);
+
+} catch (parseError) {
+  console.error("JSON Parse Error:", parseError);
+  console.error("AI Response:", result);
+
+  return res.status(500).json({
+    success: false,
+    message: "AI returned invalid JSON.",
+  });
+}
 
     res.json({
       success: true,

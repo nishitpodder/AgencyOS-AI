@@ -1,9 +1,10 @@
 require("dotenv").config();
 
-const { GoogleGenAI } = require("@google/genai");
+const OpenAI = require("openai");
 
-const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY,
+const client = new OpenAI({
+  apiKey: process.env.OPENROUTER_API_KEY,
+  baseURL: "https://openrouter.ai/api/v1",
 });
 
 async function generateEmail(leadData) {
@@ -52,14 +53,26 @@ Instructions
 
   for (let attempt = 1; attempt <= 3; attempt++) {
     try {
-      const response = await ai.models.generateContent({
-        model: process.env.GEMINI_MODEL,
-        contents: prompt,
+      const completion = await client.chat.completions.create({
+        model: process.env.OPENROUTER_MODEL,
+        messages: [
+          {
+            role: "user",
+            content: prompt,
+          },
+        ],
+        temperature: 0.3,
       });
+
+      const content = completion.choices?.[0]?.message?.content;
+
+      if (!content) {
+        throw new Error("OpenRouter returned an empty email.");
+      }
 
       console.log("✅ Email Generated");
 
-      return response.text;
+      return content;
 
     } catch (error) {
 
