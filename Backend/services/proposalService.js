@@ -1,11 +1,6 @@
 require("dotenv").config();
 
-const OpenAI = require("openai");
-
-const client = new OpenAI({
-  apiKey: process.env.OPENROUTER_API_KEY,
-  baseURL: "https://openrouter.ai/api/v1",
-});
+const { createCompletion } = require("./aiClient");
 
 async function generateProposal(leadData) {
   console.log("🚀 Proposal Service Started");
@@ -74,16 +69,15 @@ Replace them with the provided values.
 
   for (let attempt = 1; attempt <= 3; attempt++) {
     try {
-      const completion = await client.chat.completions.create({
-        model: process.env.OPENROUTER_MODEL,
-        messages: [
-          {
-            role: "user",
-            content: prompt,
-          },
-        ],
-        temperature: 0.3,
-      });
+      const completion = await createCompletion(
+  [
+    {
+      role: "user",
+      content: prompt,
+    },
+  ],
+  0.3
+);
 
       const content = completion.choices?.[0]?.message?.content;
 

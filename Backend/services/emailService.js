@@ -19,16 +19,16 @@ async function createCompletionWithRetry(prompt) {
     console.log(`Trying model: ${model}`);
 
     try {
-      const completion = await client.chat.completions.create({
-        model,
-        messages: [
-          {
-            role: "user",
-            content: prompt,
-          },
-        ],
-        temperature: 0.3,
-      });
+      const { createCompletion } = require("./aiClient");
+      const completion = await createCompletion(
+  [
+    {
+      role: "user",
+      content: prompt,
+    },
+  ],
+  0.3
+);
 
       console.log(`Success with ${model}`);
       return completion;
