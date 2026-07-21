@@ -18,7 +18,11 @@ const client = new OpenAI({
     "X-Title": "AgencyOS-AI",
   },
 });
-
+const MODELS = [
+  "google/gemma-4-31b-it:free",
+  "google/gemma-4-26b-a4b-it:free",
+  "poolside/laguna-xs-2.1:free"
+];
 async function analyzeLead(leadData) {async function createCompletionWithRetry(request, maxRetries = 3) {
   let lastError;
 
@@ -33,7 +37,8 @@ async function analyzeLead(leadData) {async function createCompletionWithRetry(r
       }
 
       const delay = 1000 * Math.pow(2, attempt - 1);
-      console.log(`Rate limited. Retrying in ${delay} ms...`);
+      console.log("Model:", process.env.OPENROUTER_MODEL);
+      require("dotenv").config();
       await new Promise(resolve => setTimeout(resolve, delay));
     }
   }
@@ -63,6 +68,14 @@ Required JSON format:
   "summary": "",
   "recommendation": ""
 }
+Return an integer leadScore between 0 and 100.
+
+Scoring Guide:
+100 = Excellent opportunity
+75 = Strong opportunity
+50 = Average opportunity
+25 = Weak opportunity
+0 = Not a viable lead
 
 Lead Information:
 
