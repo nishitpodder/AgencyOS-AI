@@ -6,6 +6,49 @@ const client = new OpenAI({
   apiKey: process.env.OPENROUTER_API_KEY,
   baseURL: "https://openrouter.ai/api/v1",
 });
+const MODELS = [
+  "google/gemma-4-31b-it:free",
+  "google/gemma-4-26b-a4b-it:free",
+  "poolside/laguna-xs-2.1:free"
+];
+
+async function createCompletionWithRetry(prompt) {
+  let lastError;
+
+  for (const model of MODELS) {
+    console.log(`Trying model: ${model}`);
+
+    try {
+      const completion = await client.chat.completions.create({
+        model,
+        messages: [
+          {
+            role: "user",
+            content: prompt,
+          },
+        ],
+        temperature: 0.3,
+      });
+
+      console.log(`Success with ${model}`);
+      return completion;
+
+    } catch (err) {
+
+      lastError = err;
+
+      console.log(`Failed with ${model}`);
+
+      if (err.status !== 429) {
+        throw err;
+      }
+
+      console.log("Trying next model...");
+    }
+  }
+
+  throw lastError;
+}
 
 async function generateEmail(leadData) {
   console.log("🚀 Email Service Started");
@@ -53,16 +96,7 @@ Instructions
 
   for (let attempt = 1; attempt <= 3; attempt++) {
     try {
-      const completion = await client.chat.completions.create({
-        model: process.env.OPENROUTER_MODEL,
-        messages: [
-          {
-            role: "user",
-            content: prompt,
-          },
-        ],
-        temperature: 0.3,
-      });
+      const completion = await createCompletionWithRetry(prompt);
 
       const content = completion.choices?.[0]?.message?.content;
 
