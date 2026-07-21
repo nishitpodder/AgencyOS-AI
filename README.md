@@ -116,7 +116,7 @@ Gemma / Laguna AI Models
 - Personalized sales email generation
 - Automatic AI model failover
 - Production deployment on Render
-- Responsive web interface
+- Web interface
 
 ## 👨‍💼 Founder
 
