@@ -47,6 +47,77 @@ Reduce repetitive agency work from **30 minutes to less than 3 minutes** using A
 
 ---
 
+## ✨ Features
+
+- 🤖 AI Lead Qualification
+- 📊 AI Lead Scoring
+- 📄 AI Proposal Generation
+- 📧 AI Sales Email Generation
+- 📥 PDF Export
+- 📋 Copy Proposal & Email
+- 🔄 Automatic OpenRouter Model Fallback
+- ☁️ Fully Deployed on Render
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+- Next.js
+- React
+- CSS
+
+### Backend
+- Node.js
+- Express.js
+
+### AI
+- OpenRouter API
+- Google Gemma Models
+- Poolside Laguna Model
+
+### Deployment
+- Render
+
+### Version Control
+- Git & GitHub
+
+---
+
+## 🏗️ Architecture
+
+User
+↓
+Frontend (Next.js)
+↓
+Backend (Express.js)
+↓
+OpenRouter API
+↓
+Gemma / Laguna AI Models
+
+---
+
+## 🚀 Future Improvements
+
+- CRM Integration
+- User Authentication
+- Lead History Dashboard
+- AI Chat Assistant
+- Team Collaboration
+- Analytics Dashboard
+
+---
+
+## 🏆 Hackathon Highlights
+
+- AI-powered lead qualification
+- Proposal generation in seconds
+- Personalized sales email generation
+- Automatic AI model failover
+- Production deployment on Render
+- Responsive web interface
+
 ## 👨‍💼 Founder
 
 **Nishit Podder**
