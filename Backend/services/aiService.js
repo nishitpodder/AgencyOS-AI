@@ -23,28 +23,44 @@ const MODELS = [
   "google/gemma-4-26b-a4b-it:free",
   "poolside/laguna-xs-2.1:free"
 ];
-async function analyzeLead(leadData) {async function createCompletionWithRetry(request, maxRetries = 3) {
+async function createCompletionWithRetry(prompt) {
   let lastError;
 
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+  for (const model of MODELS) {
+    console.log(`Trying model: ${model}`);
+
     try {
-      return await client.chat.completions.create(request);
+      const completion = await client.chat.completions.create({
+        model,
+        messages: [
+          {
+            role: "user",
+            content: prompt,
+          },
+        ],
+        temperature: 0.3,
+      });
+
+      console.log(`Success with ${model}`);
+      return completion;
+
     } catch (err) {
       lastError = err;
 
-      if (err.status !== 429 || attempt === maxRetries) {
+      console.log(`Failed with ${model}`);
+
+      if (err.status !== 429) {
         throw err;
       }
 
-      const delay = 1000 * Math.pow(2, attempt - 1);
-      console.log("Model:", process.env.OPENROUTER_MODEL);
-      require("dotenv").config();
-      await new Promise(resolve => setTimeout(resolve, delay));
+      console.log("Trying next model...");
     }
   }
 
   throw lastError;
 }
+ async function analyzeLead(leadData) {
+  
   console.log("🚀 AI Service Started");
 
   const prompt = `
@@ -89,16 +105,7 @@ Requirements: ${leadData.requirements}
 
   for (let attempt = 1; attempt <= 3; attempt++) {
     try {
-      const completion = await createCompletionWithRetry({
-  model: process.env.OPENROUTER_MODEL,
-  messages: [
-    {
-      role: "user",
-      content: prompt,
-    },
-  ],
-  temperature: 0.3,
-});
+      const completion = await createCompletionWithRetry(prompt);
 
 const content = completion.choices?.[0]?.message?.content;
 
@@ -120,7 +127,7 @@ return content;
       throw error;
     }
   }
-}
+}   // <-- Add this closing brace
 
 module.exports = {
   analyzeLead,
